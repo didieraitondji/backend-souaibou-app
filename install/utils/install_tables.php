@@ -1,6 +1,6 @@
 <?php
 
-include_once("./config/database.php");
+include_once("../config/database.php");
 $database = new Database();
 
 // logique de création des tables avec try_catch
@@ -16,8 +16,8 @@ try {
             first_name VARCHAR(100) NOT NULL,
             last_name VARCHAR(100) NOT NULL,
             sexe VARCHAR(5) NOT NULL,
-            email VARCHAR(150) DEFAULT NULL UNIQUE CHECK (email LIKE '%_@__%.__%'),
-            telephone VARCHAR(20) NOT NULL UNIQUE CHECK (phone_number REGEXP '^[+][0-9]{1,3}[0-9]{6,}$'),
+            email VARCHAR(150) DEFAULT NULL,
+            telephone VARCHAR(20) NOT NULL,
             users_password VARCHAR(255) NOT NULL,
             rue VARCHAR(255),
             ville VARCHAR(100),
@@ -28,6 +28,7 @@ try {
             picture VARCHAR(255) DEFAULT NULL,
             user_type ENUM('admin', 'user') DEFAULT 'user',
             is_activated BOOLEAN DEFAULT TRUE,
+            is_connected BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted_at DATETIME DEFAULT NULL
@@ -38,8 +39,8 @@ try {
             first_name VARCHAR(100) NOT NULL,
             last_name VARCHAR(100) NOT NULL,
             sexe VARCHAR(5) NOT NULL,
-            email VARCHAR(255) UNIQUE,
-            telephone VARCHAR(20) NOT NULL UNIQUE,
+            email VARCHAR(255) DEFAULT NULL,
+            telephone VARCHAR(20) NOT NULL,
             livreurs_password VARCHAR(255) NOT NULL,
             rue VARCHAR(255),
             ville VARCHAR(100),
