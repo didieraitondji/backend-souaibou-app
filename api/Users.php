@@ -2,7 +2,6 @@
 
 class Users
 {
-    // Propriétés de la classe (correspondent aux colonnes de la table users)
     private $id_users;
     private $first_name;
     private $last_name;
@@ -22,161 +21,96 @@ class Users
     private $created_at;
     private $updated_at;
     private $deleted_at;
-
-    // Objet PDO pour la connexion à la base de données
     private $conn;
 
-    // Constructeur pour initialiser la connexion à la base de données
     public function __construct($db)
     {
         $this->conn = $db;
     }
 
-    // Méthode pour créer un utilisateur
     public function create()
     {
-        // SQL pour insérer un nouvel utilisateur
-        $query = "INSERT INTO users (first_name, last_name, sexe, email, telephone, users_password, rue, ville, code_postal, pays, notification_option, picture)
-        VALUES (:first_name, :last_name, :sexe, :email, :telephone, :users_password, :rue, :ville, :code_postal, :pays, :notification_option, :picture)";
+        $checkQuery = "SELECT COUNT(*) FROM users WHERE telephone = :telephone";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bindParam(':telephone', $this->telephone);
+        $checkStmt->execute();
 
-        // Préparation de la requête
+        if ($checkStmt->fetchColumn() > 0) {
+            return $this->jsonResponse('error', 'Le numéro de téléphone existe déjà', []);
+        }
+
+        $query = "INSERT INTO users (first_name, last_name, sexe, email, telephone, users_password, rue, ville, code_postal, pays, picture)
+        VALUES (:first_name, :last_name, :sexe, :email, :telephone, :users_password, :rue, :ville, :code_postal, :pays, :picture)";
+
         $stmt = $this->conn->prepare($query);
 
-        // Liaison des paramètres
+        $passhash = password_hash($this->users_password, PASSWORD_BCRYPT);
+
         $stmt->bindParam(':first_name', $this->first_name);
         $stmt->bindParam(':last_name', $this->last_name);
         $stmt->bindParam(':sexe', $this->sexe);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':telephone', $this->telephone);
-        $stmt->bindParam(':users_password', $this->users_password);
+        $stmt->bindParam(':users_password', $passhash);
         $stmt->bindParam(':rue', $this->rue);
         $stmt->bindParam(':ville', $this->ville);
         $stmt->bindParam(':code_postal', $this->code_postal);
         $stmt->bindParam(':pays', $this->pays);
-        $stmt->bindParam(':notification_option', $this->notification_option);
         $stmt->bindParam(':picture', $this->picture);
 
-        // Exécution de la requête et retour de l'état d'exécution
         if ($stmt->execute()) {
-            return json_encode([
-                'status' => 'sucess',
-                'message' => 'Compte créer avec succès ! '
-            ]);
+            return $this->jsonResponse('success', 'Compte créé avec succès !', []);
         }
-        return false;
+
+        return $this->jsonResponse('error', 'Impossible de créer l\'utilisateur', []);
     }
 
-    // Méthode pour récupérer un utilisateur par son ID
     public function readOne()
     {
-        // Requête pour récupérer un utilisateur par son ID
         $query = "SELECT * FROM users WHERE id_users = :id_users";
-
-        // Préparation de la requête
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_users', $this->id_users);
         $stmt->execute();
 
-        // Si un utilisateur est trouvé
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Remplir les propriétés de l'objet avec les valeurs récupérées
-            $user_data = [
-                'id_users' => $row['id_users'],
-                'first_name' => $row['first_name'],
-                'last_name' => $row['last_name'],
-                'sexe' => $row['sexe'],
-                'email' => $row['email'],
-                'telephone' => $row['telephone'],
-                'rue' => $row['rue'],
-                'ville' => $row['ville'],
-                'code_postal' => $row['code_postal'],
-                'pays' => $row['pays'],
-                'last_connexion' => $row['last_connexion'],
-                'notification_option' => $row['notification_option'],
-                'picture' => $row['picture'],
-                'user_type' => $row['user_type'],
-                'is_activated' => $row['is_activated'],
-                'created_at' => $row['created_at'],
-                'updated_at' => $row['updated_at'],
-                'deleted_at' => $row['deleted_at']
-            ];
+            foreach ($row as $key => $value) {
+                $this->$key = $value;
+            }
 
-            // Retourner les données de l'utilisateur sous format JSON
-            return json_encode([
-                'status' => 'success',
-                'message' => 'Utilisateur trouvé',
-                'data' => $user_data
-            ]);
-        } else {
-            // Si aucun utilisateur n'est trouvé, retourner un message d'erreur
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Utilisateur non trouvé',
-                'data' => []
-            ]);
+            return json_encode(['status' => 'success', 'data' => $row]);
         }
+
+        return json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé']);
     }
+
 
     public function readAll($val = 1)
     {
-        // Requête pour récupérer tous les utilisateurs
         $query = "SELECT * FROM users WHERE is_activated = :is_activated";
-
-        // Préparation de la requête
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':is_activated', $val);
+        $stmt->bindParam(':is_activated', $val, PDO::PARAM_INT);
         $stmt->execute();
 
-        // Si des utilisateurs sont trouvés
-        if ($stmt->rowCount() > 0) {
-            $users_data = [];
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Récupérer chaque utilisateur et remplir un tableau
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $user_data = [
-                    'id_users' => $row['id_users'],
-                    'first_name' => $row['first_name'],
-                    'last_name' => $row['last_name'],
-                    'sexe' => $row['sexe'],
-                    'email' => $row['email'],
-                    'telephone' => $row['telephone'],
-                    'rue' => $row['rue'],
-                    'ville' => $row['ville'],
-                    'code_postal' => $row['code_postal'],
-                    'pays' => $row['pays'],
-                    'last_connexion' => $row['last_connexion'],
-                    'notification_option' => $row['notification_option'],
-                    'picture' => $row['picture'],
-                    'user_type' => $row['user_type'],
-                    'is_activated' => $row['is_activated'],
-                    'created_at' => $row['created_at'],
-                    'updated_at' => $row['updated_at'],
-                    'deleted_at' => $row['deleted_at']
-                ];
-
-                // Ajouter l'utilisateur au tableau des utilisateurs
-                $users_data[] = $user_data;
-            }
-
-            // Retourner les données sous format JSON
-            return json_encode([
-                'status' => 'success',
-                'message' => 'Utilisateurs récupérés avec succès',
-                'data' => $users_data
-            ]);
-        } else {
-            // Si aucun utilisateur n'est trouvé, retourner un message d'erreur
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Aucun utilisateur trouvé',
-                'data' => []
-            ]);
+        if (!empty($users)) {
+            return json_encode(['status' => 'success', 'data' => $users]);
         }
+
+        return json_encode(['status' => 'error', 'message' => 'Aucun utilisateur trouvé']);
     }
 
 
+    private function jsonResponse($status, $message, $data = [])
+    {
+        return json_encode([
+            'status' => $status,
+            'message' => $message,
+            'data' => $data
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    }
 
     // Méthode pour mettre à jour les informations d'un utilisateur
     public function update()
@@ -187,7 +121,6 @@ class Users
                   sexe = :sexe,
                   email = :email,
                   telephone = :telephone,
-                  users_password = :users_password,
                   rue = :rue,
                   ville = :ville,
                   code_postal = :code_postal,
@@ -206,7 +139,6 @@ class Users
         $stmt->bindParam(':sexe', $this->sexe);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':telephone', $this->telephone);
-        $stmt->bindParam(':users_password', $this->users_password);
         $stmt->bindParam(':rue', $this->rue);
         $stmt->bindParam(':ville', $this->ville);
         $stmt->bindParam(':code_postal', $this->code_postal);
@@ -265,9 +197,6 @@ class Users
         }
         return false;
     }
-
-    // Getters et setters pour les propriétés (si besoin)
-    // Getters et Setters
 
     // Getter et Setter pour id_users
     public function getIdUsers()

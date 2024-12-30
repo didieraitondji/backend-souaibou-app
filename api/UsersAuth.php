@@ -21,28 +21,12 @@ class UsersAuth
 
         if ($stmt->rowCount() > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
             if (password_verify($password, $user['users_password'])) {
                 $this->updateConnexionStatus($user['id_users'], true);
                 return json_encode([
                     'status' => 'success',
                     'message' => 'Connexion réussie',
-                    'data' => [
-                        'user_id' => $user['id_users'],
-                        'first_name' => $user['first_name'],
-                        'last_name' => $user['last_name'],
-                        'email' => $user['email'],
-                        'user_type' => $user['user_type'],
-                        'sexe' => $user['sexe'],
-                        'telephone' => $user['telephone'],
-                        'rue' => $user['rue'],
-                        'ville' => $user['ville'],
-                        'code_postal' => $user['code_postal'],
-                        'pays' => $user['pays'],
-                        'last_connexion' => $user['last_connexion'],
-                        'notification_option' => $user['notification_option'],
-                        'picture' => $user['picture']
-                    ]
+                    'data' => $user
                 ]);
             } else {
                 return json_encode([
@@ -62,10 +46,15 @@ class UsersAuth
     {
         $query = "UPDATE users SET last_connexion = :last_connexion WHERE id_users = :id_users";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':last_connexion', date('Y-m-d H:i:s'));
+
+        // Stocker la date dans une variable avant de la lier
+        $currentDateTime = date('Y-m-d H:i:s');
+        $stmt->bindParam(':last_connexion', $currentDateTime);
         $stmt->bindParam(':id_users', $userId);
+
         $stmt->execute();
     }
+
 
     public function updateConnexionStatus($userId, $val = FALSE)
     {
