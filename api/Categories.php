@@ -210,14 +210,44 @@ class Categories
     // Supprimer une catégorie
     public function delete()
     {
-        $query = "DELETE FROM categories WHERE id_categorie = :id_categorie";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_categorie', $this->id_categorie);
-
-        if ($stmt->execute()) {
-            return json_encode(['status' => 'success', 'message' => 'Catégorie supprimée avec succès']);
+        // Vérification préalable de l'ID de la catégorie
+        if (empty($this->id_categorie)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID de la catégorie non fourni ou invalide'
+            ]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Échec de la suppression de la catégorie']);
+        try {
+            // Préparer la requête SQL
+            $query = "DELETE FROM categories WHERE id_categorie = :id_categorie";
+            $stmt = $this->conn->prepare($query);
+
+            // Lier le paramètre avec une vérification stricte de type
+            $stmt->bindParam(':id_categorie', $this->id_categorie, PDO::PARAM_INT);
+
+            // Exécuter la requête
+            $stmt->execute();
+
+            // Vérification du nombre de lignes affectées
+            if ($stmt->rowCount() > 0) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Catégorie supprimée avec succès'
+                ]);
+            }
+
+            // Si aucune ligne n'est affectée, cela signifie que l'ID est introuvable
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucune catégorie trouvée avec cet ID'
+            ]);
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la suppression : ' . $e->getMessage()
+            ]);
+        }
     }
 }

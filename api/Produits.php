@@ -274,14 +274,43 @@ class Produits
     // DELETE
     public function delete()
     {
-        $query = "DELETE FROM produits WHERE id_produit = :id_produit";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_produit', $this->id_produit);
-
-        if ($stmt->execute()) {
-            return json_encode(['status' => 'success', 'message' => 'Produit supprimé avec succès']);
+        // Vérification si l'ID du produit est fourni et valide
+        if (empty($this->id_produit)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID produit non fourni ou invalide'
+            ]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Échec de la suppression du produit']);
+        try {
+            // Préparation de la requête de suppression
+            $query = "DELETE FROM produits WHERE id_produit = :id_produit";
+            $stmt = $this->conn->prepare($query);
+
+            // Liaison du paramètre avec une vérification du type
+            $stmt->bindParam(':id_produit', $this->id_produit, PDO::PARAM_INT);
+
+            // Exécution de la requête
+            $stmt->execute();
+
+            // Vérification si une ligne a été supprimée
+            if ($stmt->rowCount() > 0) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Produit supprimé avec succès'
+                ]);
+            }
+
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucun produit trouvé avec cet ID'
+            ]);
+        } catch (PDOException $e) {
+            // Gestion des erreurs en cas d'exception
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la suppression du produit : ' . $e->getMessage()
+            ]);
+        }
     }
 }

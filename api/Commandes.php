@@ -363,6 +363,14 @@ class Commandes
     // Méthode delete
     public function delete()
     {
+        // Vérification préalable si l'ID de la commande est défini
+        if (empty($this->id_commande)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID de commande non fourni ou invalide'
+            ]);
+        }
+
         try {
             // Démarrer une transaction
             $this->conn->beginTransaction();
@@ -370,23 +378,43 @@ class Commandes
             // Supprimer les entrées associées dans produits_commandes
             $queryProduitsCommandes = "DELETE FROM produits_commandes WHERE id_commande = :id_commande";
             $stmtProduitsCommandes = $this->conn->prepare($queryProduitsCommandes);
-            $stmtProduitsCommandes->bindParam(':id_commande', $this->id_commande);
+            $stmtProduitsCommandes->bindParam(':id_commande', $this->id_commande, PDO::PARAM_INT);
             $stmtProduitsCommandes->execute();
+
+            // Vérifier si des produits étaient liés à la commande
+            $produitsSupprimes = $stmtProduitsCommandes->rowCount();
 
             // Supprimer l'entrée dans commandes
             $queryCommandes = "DELETE FROM commandes WHERE id_commande = :id_commande";
             $stmtCommandes = $this->conn->prepare($queryCommandes);
-            $stmtCommandes->bindParam(':id_commande', $this->id_commande);
+            $stmtCommandes->bindParam(':id_commande', $this->id_commande, PDO::PARAM_INT);
             $stmtCommandes->execute();
 
-            // Valider la transaction
-            $this->conn->commit();
+            // Vérifier si la commande a été supprimée
+            $commandeSupprimee = $stmtCommandes->rowCount();
 
-            return json_encode(['status' => 'success', 'message' => 'Commande et ses produits associés supprimés avec succès']);
+            if ($commandeSupprimee > 0) {
+                // Valider la transaction
+                $this->conn->commit();
+                return json_encode([
+                    'status' => 'success',
+                    'message' => "Commande supprimée avec succès, ainsi que $produitsSupprimes produit(s) associé(s)"
+                ]);
+            }
+
+            // Si aucune commande n'a été trouvée
+            $this->conn->rollBack();
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucune commande trouvée avec cet ID'
+            ]);
         } catch (Exception $e) {
             // Annuler la transaction en cas d'erreur
             $this->conn->rollBack();
-            return json_encode(['status' => 'error', 'message' => 'Échec de la suppression : ' . $e->getMessage()]);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Échec de la suppression : ' . $e->getMessage()
+            ]);
         }
     }
 }

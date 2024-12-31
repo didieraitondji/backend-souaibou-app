@@ -187,16 +187,38 @@ class Users
     // Méthode pour supprimer un utilisateur
     public function delete()
     {
-        $query = "DELETE FROM users WHERE id_users = :id_users";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_users', $this->id_users);
-
-        if ($stmt->execute()) {
-            return true;
+        if (empty($this->id_users)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID utilisateur non fourni !'
+            ]);
         }
-        return false;
+
+        try {
+            $query = "DELETE FROM users WHERE id_users = :id_users";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id_users', $this->id_users, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Utilisateur supprimé avec succès !'
+                ]);
+            }
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucun utilisateur trouvé avec cet ID !'
+            ]);
+        } catch (PDOException $e) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la suppression : ' . $e->getMessage()
+            ]);
+        }
     }
+
 
     // Getter et Setter pour id_users
     public function getIdUsers()

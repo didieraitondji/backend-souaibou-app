@@ -369,14 +369,42 @@ class Livreurs
     // Méthode pour supprimer un livreur
     public function delete()
     {
-        $query = "DELETE FROM livreurs WHERE id_livreur = :id_livreur";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_livreur', $this->id_livreur);
-
-        if ($stmt->execute()) {
-            return json_encode(['status' => 'success', 'message' => 'Livreur supprimé avec succès']);
+        // Vérification préalable si l'ID du livreur est défini
+        if (empty($this->id_livreur)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID du livreur non fourni ou invalide'
+            ]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Échec de la suppression du livreur']);
+        try {
+            // Préparer la requête
+            $query = "DELETE FROM livreurs WHERE id_livreur = :id_livreur";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id_livreur', $this->id_livreur, PDO::PARAM_INT);
+
+            // Exécuter la requête
+            $stmt->execute();
+
+            // Vérifier si un livreur a été supprimé
+            if ($stmt->rowCount() > 0) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Livreur supprimé avec succès'
+                ]);
+            }
+
+            // Si aucun livreur n'a été supprimé
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucun livreur trouvé avec cet ID'
+            ]);
+        } catch (Exception $e) {
+            // Gérer les erreurs
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Échec de la suppression : ' . $e->getMessage()
+            ]);
+        }
     }
 }

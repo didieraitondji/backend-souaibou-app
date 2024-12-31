@@ -297,14 +297,42 @@ class Livraison
     // Méthode pour supprimer une livraison
     public function delete()
     {
-        $query = "DELETE FROM livraisons WHERE id_livraison = :id_livraison";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_livraison', $this->id_livraison);
-
-        if ($stmt->execute()) {
-            return json_encode(['status' => 'success', 'message' => 'Livraison supprimée avec succès']);
+        // Vérification préalable si l'ID de la livraison est défini
+        if (empty($this->id_livraison)) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'ID de la livraison non fourni ou invalide'
+            ]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Erreur lors de la suppression de la livraison']);
+        try {
+            // Préparer la requête de suppression
+            $query = "DELETE FROM livraisons WHERE id_livraison = :id_livraison";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id_livraison', $this->id_livraison, PDO::PARAM_INT);
+
+            // Exécuter la requête
+            $stmt->execute();
+
+            // Vérifier si une livraison a été supprimée
+            if ($stmt->rowCount() > 0) {
+                return json_encode([
+                    'status' => 'success',
+                    'message' => 'Livraison supprimée avec succès'
+                ]);
+            }
+
+            // Si aucune ligne affectée, retourner une réponse adaptée
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Aucune livraison trouvée avec cet ID'
+            ]);
+        } catch (Exception $e) {
+            // Gérer les erreurs
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Erreur lors de la suppression : ' . $e->getMessage()
+            ]);
+        }
     }
 }
