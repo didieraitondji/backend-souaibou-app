@@ -116,7 +116,7 @@ switch ($url[0]) {
         }
         break;
     case 'livraison':
-        if (!empty($url[1])) {
+        if (empty($url[1])) {
             echo $jsonErrorData;
         } else {
             $livraison = new Livraison($database->getConnection());
@@ -130,24 +130,27 @@ switch ($url[0]) {
             $livraison->setPays($data["pays"]);
             $livraison->setStatutLivraison($data["statut_livraison"]);
             $livraison->setDateLivraisonEstimee($data["date_livraison_estimee"]);
+            $livraison->setDateLivraisonEffective($data["date_livraison_effective"]);
             $livraison->setMoyenTransport($data["moyen_transport"]);
             $livraison->setCommentaires($data["commentaires"]);
+            $livraison->setIdLivraison($url[1]);
 
-            echo $livraison->create();
+            echo $livraison->update();
         }
         break;
     case 'categorie':
-        if (!empty($url[1])) {
+        if (empty($url[1])) {
             echo $jsonErrorData;
         } else {
             $categorie = new Categories($database->getConnection());
 
-            $categorie->setIdUsers($data["id_users"]);
+            $categorie->setIdCategorie($url[1]);
             $categorie->setNomCategorie($data["nom_categorie"]);
             $categorie->setCDescription($data["c_description"]);
             $categorie->setCImage($data["c_image"]);
+            $categorie->setStatutCategorie($data['statut_categorie']);
 
-            echo $categorie->create();
+            echo $categorie->update();
         }
         break;
 
