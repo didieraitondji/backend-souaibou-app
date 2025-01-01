@@ -23,9 +23,11 @@ class UsersAuth
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($password, $user['users_password'])) {
                 $this->updateConnexionStatus($user['id_users'], true);
+                $token = new Auth();
                 return json_encode([
                     'status' => 'success',
                     'message' => 'Connexion réussie',
+                    'token' => $token->generateToken($user['id_users']),
                     'data' => $user
                 ]);
             } else {

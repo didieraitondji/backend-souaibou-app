@@ -86,7 +86,7 @@ try {
             FOREIGN KEY (id_categorie) REFERENCES categories(id_categorie) ON DELETE CASCADE,
             FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE SET NULL
         )",
-        "CREATE TABLE commandes (
+        "CREATE TABLE IF NOT EXISTS commandes (
             id_commande INT AUTO_INCREMENT PRIMARY KEY,
             id_users INT NOT NULL,
             total_commande DECIMAL(10, 2) NOT NULL,
@@ -104,7 +104,7 @@ try {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (id_users) REFERENCES users(id_users)
         )",
-        "CREATE TABLE produits_commandes (
+        "CREATE TABLE IF NOT EXISTS produits_commandes (
             id_commande INT NOT NULL,
             id_produit INT NOT NULL,
             quantite INT NOT NULL,

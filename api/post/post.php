@@ -12,6 +12,9 @@ $jsonErrorData = json_encode(array(
     "message" => "Identifiant invalide",
 ));
 
+$token = new Auth();
+
+
 switch ($url[0]) {
     case 'user':
         if (!empty($url[1])) {
@@ -196,3 +199,12 @@ switch ($url[0]) {
         echo $jsonErrorData;
         break;
 }
+
+/*
+if ($data['token'] && $token->verifyToken($data['token'])) {
+} else {
+    echo json_encode(array(
+        "status" => "error",
+        "message" => "Token invalide !",
+    ));
+}*/

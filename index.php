@@ -1,5 +1,6 @@
 <?php
 
+include_once("./api/models.php");
 include_once("./api/Users.php");
 include_once("./api/UsersAuth.php");
 include_once("./api/Categories.php");
@@ -8,7 +9,7 @@ include_once("./api/Produits.php");
 include_once("./api/Livraisons.php");
 include_once("./api/Livreurs.php");
 include_once("./api/LivreursAuth.php");
-include_once("./api/models.php");
+
 
 header("Content-Type: application/json");
 

@@ -23,9 +23,11 @@ class LivreursAuth
             $livreur = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($password, $livreur['livreurs_password'])) {
                 $this->updateConnexionStatus($livreur['id_livreur'], true);
+                $token = new Auth();
                 return json_encode([
                     'status' => 'success',
                     'message' => 'Connexion réussie',
+                    'token' => $token->generateToken($livreur['id_livreur']),
                     'data' => $livreur
                 ]);
             } else {
