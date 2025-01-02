@@ -18,6 +18,7 @@ class Users
     private $picture;
     private $user_type;
     private $is_activated;
+    private $is_connected;
     private $created_at;
     private $updated_at;
     private $deleted_at;
@@ -79,10 +80,10 @@ class Users
                 $this->$key = $value;
             }
 
-            return json_encode(['status' => 'success', 'data' => $row]);
+            return json_encode(['status' => 'success', 'message' => 'Utilisateur trouvé', 'data' => $row]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé']);
+        return json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé', 'data' => []]);
     }
 
 

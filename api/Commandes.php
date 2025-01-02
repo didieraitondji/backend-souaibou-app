@@ -246,12 +246,12 @@ class Commandes
 
             // Retourner la réponse JSON
             return json_encode(
-                ['status' => 'success', 'message' => 'Commande trouvée avec succès', 'data' => $commande, 'produit' => $produits],
+                ['status' => 'success', 'message' => 'Commande trouvée avec succès', 'data' => $commande],
                 JSON_UNESCAPED_UNICODE
             );
         } catch (Exception $e) {
             // Gestion des exceptions
-            return json_encode(['status' => 'error', 'message' => 'Une erreur est survenue : ' . $e->getMessage()]);
+            return json_encode(['status' => 'error', 'message' => 'Une erreur est survenue : ' . $e->getMessage(), 'data' => []]);
         }
     }
 

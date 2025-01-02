@@ -22,6 +22,8 @@ class Livreurs
     private $is_connected;
     private $vehicule_type;
     private $vehicule_immatriculation;
+    private $created_at;
+    private $updated_at;
 
     // Constructeur
     public function __construct($db)

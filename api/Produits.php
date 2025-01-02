@@ -216,7 +216,8 @@ class Produits
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            return json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            return json_encode(['status' => 'succes', 'message' => 'Produit trouvé', 'data' => $data]);
         }
 
         return json_encode(['status' => 'error', 'message' => 'Produit introuvable']);
@@ -229,7 +230,9 @@ class Produits
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
-        return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return json_encode(['status' => 'success', 'message' => 'Liste de tout les Produits !', 'data' => $data]);
     }
 
     // UPDATE

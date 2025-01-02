@@ -164,7 +164,7 @@ class Categories
             return json_encode(['status' => 'success', 'data' => $row]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Catégorie introuvable']);
+        return json_encode(['status' => 'error', 'message' => 'Catégorie introuvable', 'data' => []]);
     }
 
     // Lire toutes les catégories
@@ -178,6 +178,7 @@ class Categories
 
         return json_encode([
             'status' => 'success',
+            'message' => 'Toutes les catégories !',
             'data' => $categories
         ]);
     }

@@ -228,10 +228,10 @@ class Livraison
             $this->moyen_transport = $row['moyen_transport'];
             $this->commentaires = $row['commentaires'];
 
-            return json_encode($row);
+            return json_encode(['status' => 'succes', 'message' => 'Livraison trouvée', 'data' => $row]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Livraison non trouvée']);
+        return json_encode(['status' => 'error', 'message' => 'Livraison non trouvée', 'data' => []]);
     }
 
     // Méthode pour lire toutes les livraisons
@@ -247,10 +247,10 @@ class Livraison
                 $livraisons[] = $row;
             }
 
-            return json_encode($livraisons);
+            return json_encode(['status' => 'succes', 'message' => 'livraison trouvée', 'data' => $livraisons]);
         }
 
-        return json_encode(['status' => 'error', 'message' => 'Aucune livraison trouvée']);
+        return json_encode(['status' => 'error', 'message' => 'Aucune livraison trouvée', 'data' => []]);
     }
 
     // Méthode pour mettre à jour une livraison
