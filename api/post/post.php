@@ -60,6 +60,7 @@ switch ($url[0]) {
             $user->setVille($data["ville"]);
             $user->setPays($data["pays"]);
             $user->setCodePostal($data["code_postal"]);
+            $user->setNotificationOption($data["notification_option"]);
 
             // creation de l'utilisateur maintenant
             echo $user->create();

@@ -31,40 +31,60 @@ class Users
 
     public function create()
     {
-        $checkQuery = "SELECT COUNT(*) FROM users WHERE telephone = :telephone";
-        $checkStmt = $this->conn->prepare($checkQuery);
-        $checkStmt->bindParam(':telephone', $this->telephone);
-        $checkStmt->execute();
+        try {
+            $this->conn->beginTransaction();
 
-        if ($checkStmt->fetchColumn() > 0) {
-            return $this->jsonResponse('error', 'Le numéro de téléphone existe déjà', []);
+            // Vérification de l'existence du numéro de téléphone
+            $checkQuery = "SELECT COUNT(*) FROM users WHERE telephone = :telephone";
+            $checkStmt = $this->conn->prepare($checkQuery);
+            $checkStmt->bindParam(':telephone', $this->telephone);
+            $checkStmt->execute();
+
+            if ($checkStmt->fetchColumn() > 0) {
+                return $this->jsonResponse('error', 'Le numéro de téléphone existe déjà', []);
+            }
+
+            // Insertion de l'utilisateur
+            $query = "INSERT INTO users (first_name, last_name, sexe, email, telephone, users_password, rue, ville, code_postal, pays, notification_option, picture)
+                  VALUES (:first_name, :last_name, :sexe, :email, :telephone, :users_password, :rue, :ville, :code_postal, :pays, :notification_option, :picture)";
+
+            $stmt = $this->conn->prepare($query);
+
+            $passhash = password_hash($this->users_password, PASSWORD_BCRYPT);
+
+            $stmt->bindParam(':first_name', $this->first_name);
+            $stmt->bindParam(':last_name', $this->last_name);
+            $stmt->bindParam(':sexe', $this->sexe);
+            $stmt->bindParam(':email', $this->email);
+            $stmt->bindParam(':telephone', $this->telephone);
+            $stmt->bindParam(':users_password', $passhash);
+            $stmt->bindParam(':rue', $this->rue);
+            $stmt->bindParam(':ville', $this->ville);
+            $stmt->bindParam(':code_postal', $this->code_postal);
+            $stmt->bindParam(':pays', $this->pays);
+            $stmt->bindParam(':notification_option', $this->notification_option);
+            $stmt->bindParam(':picture', $this->picture);
+
+            if ($stmt->execute()) {
+                // Récupération de l'ID de l'utilisateur inséré
+                $userId = $this->conn->lastInsertId();
+
+                // Validation de la transaction
+                $this->conn->commit();
+
+                return $this->jsonResponse('success', 'Compte créé avec succès !', ['id_users' => $userId]);
+            }
+
+            // En cas d'échec, annulation de la transaction
+            $this->conn->rollBack();
+            return $this->jsonResponse('error', 'Impossible de créer l\'utilisateur', []);
+        } catch (Exception $e) {
+            // Gestion des exceptions et annulation de la transaction en cas d'erreur
+            $this->conn->rollBack();
+            return $this->jsonResponse('error', 'Erreur : ' . $e->getMessage(), []);
         }
-
-        $query = "INSERT INTO users (first_name, last_name, sexe, email, telephone, users_password, rue, ville, code_postal, pays, picture)
-        VALUES (:first_name, :last_name, :sexe, :email, :telephone, :users_password, :rue, :ville, :code_postal, :pays, :picture)";
-
-        $stmt = $this->conn->prepare($query);
-
-        $passhash = password_hash($this->users_password, PASSWORD_BCRYPT);
-
-        $stmt->bindParam(':first_name', $this->first_name);
-        $stmt->bindParam(':last_name', $this->last_name);
-        $stmt->bindParam(':sexe', $this->sexe);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':telephone', $this->telephone);
-        $stmt->bindParam(':users_password', $passhash);
-        $stmt->bindParam(':rue', $this->rue);
-        $stmt->bindParam(':ville', $this->ville);
-        $stmt->bindParam(':code_postal', $this->code_postal);
-        $stmt->bindParam(':pays', $this->pays);
-        $stmt->bindParam(':picture', $this->picture);
-
-        if ($stmt->execute()) {
-            return $this->jsonResponse('success', 'Compte créé avec succès !', []);
-        }
-
-        return $this->jsonResponse('error', 'Impossible de créer l\'utilisateur', []);
     }
+
 
     public function readOne()
     {

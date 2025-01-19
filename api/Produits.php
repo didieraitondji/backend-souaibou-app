@@ -193,10 +193,12 @@ class Produits
         $stmt->bindParam(':id_categorie', $this->id_categorie);
         $stmt->bindParam(':prix', $this->prix);
         $stmt->bindParam(':quantite_stock', $this->quantite_stock);
+
         $stmt->bindParam(':est_en_promotion', $this->est_en_promotion);
         $stmt->bindParam(':prix_promotionnel', $this->prix_promotionnel);
         $stmt->bindParam(':date_debut_promotion', $this->date_debut_promotion);
         $stmt->bindParam(':date_fin_promotion', $this->date_fin_promotion);
+
         $stmt->bindParam(':p_image', $this->p_image);
 
         if ($stmt->execute()) {
@@ -226,7 +228,7 @@ class Produits
     // READ ALL
     public function readAll()
     {
-        $query = "SELECT * FROM produits";
+        $query = "SELECT * FROM produits ORDER BY id_produit DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 

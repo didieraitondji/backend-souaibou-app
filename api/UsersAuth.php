@@ -39,7 +39,7 @@ class UsersAuth
         } else {
             return json_encode([
                 'status' => 'error',
-                'message' => 'Email incorrect ou utilisateur désactivé'
+                'message' => 'Téléphone incorrecte ou utilisateur désactivé'
             ]);
         }
     }

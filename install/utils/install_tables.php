@@ -26,7 +26,7 @@ try {
             last_connexion DATETIME DEFAULT NULL,
             notification_option ENUM('sms', 'email', 'none') DEFAULT 'sms',
             picture VARCHAR(255) DEFAULT NULL,
-            user_type ENUM('admin', 'user') DEFAULT 'user',
+            user_type ENUM('admin', 'user', 'Particulier', 'Bars, Resto, Buvette') DEFAULT 'user',
             is_activated BOOLEAN DEFAULT TRUE,
             is_connected BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,15 +57,24 @@ try {
             vehicule_immatriculation VARCHAR(50),
             FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
         )",
+        "CREATE TABLE IF NOT EXISTS type_produit (
+            id_type INT AUTO_INCREMENT PRIMARY KEY,
+            nom_type VARCHAR(255) NOT NULL,
+            t_description TEXT DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )",
         "CREATE TABLE IF NOT EXISTS categories (
             id_categorie INT AUTO_INCREMENT PRIMARY KEY,
             id_users INT NOT NULL,
+            id_type_produit INT NOT NULL,
             nom_categorie VARCHAR(255) NOT NULL,
             c_description TEXT,
             c_image VARCHAR(2083),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             statut_categorie ENUM('Active', 'Inactive') DEFAULT 'Active',
-            FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+            FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE,
+            FOREIGN KEY (id_type_produit) REFERENCES type_produit(id_type_produit) ON DELETE CASCADE
         )",
         "CREATE TABLE IF NOT EXISTS produits (
             id_produit INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,9 +82,10 @@ try {
             nom_produit VARCHAR(255) NOT NULL,
             p_description TEXT,
             id_categorie INT NOT NULL,
+            type_produit VARCHAR(255) NOT NULL,
             prix DECIMAL(10, 2) NOT NULL,
             quantite_stock INT NOT NULL,
-            statut_produit ENUM('Disponible', 'Indisponible', 'En rupture') DEFAULT 'Disponible', 
+            statut_produit ENUM('Disponible', 'Indisponible', 'En rupture') DEFAULT 'Disponible',
             est_en_promotion BOOLEAN DEFAULT FALSE,
             prix_promotionnel DECIMAL(10, 2) DEFAULT NULL,
             date_debut_promotion DATETIME DEFAULT NULL,
@@ -96,7 +106,7 @@ try {
             livraison_creer BOOLEAN DEFAULT FALSE,
             rue_livraison VARCHAR(255) NOT NULL,
             ville_livraison VARCHAR(100) NOT NULL,
-            code_postal_livraison VARCHAR(20) NOT NULL,
+            code_postal_livraison VARCHAR(20) DEFAULT NULL,
             pays_livraison VARCHAR(100) NOT NULL,
             date_commande DATETIME DEFAULT CURRENT_TIMESTAMP,
             commentaires TEXT DEFAULT NULL,
@@ -193,8 +203,51 @@ try {
     // Exécuter la requête
     $stmt->execute();
     echo "<br />super-admin created successfully !";
+
+    // création des types de produits de base qu'aura l'application
+    // Tableau des types de produits par défaut
+    $types_produits = [
+        ['nom_type' => 'Boissons', 'description' => 'Produits liquides consommables tels que les sodas, les jus, et les eaux'],
+        ['nom_type' => 'Bâches', 'description' => 'Bâches disponibles à la location pour les cérémonies et événements'],
+        ['nom_type' => 'Chaises', 'description' => 'Chaises disponibles à la location pour les cérémonies et événements'],
+        ['nom_type' => 'Sonorisation', 'description' => 'Équipements de sonorisation pour les événements et cérémonies'],
+        ['nom_type' => 'Services traiteurs', 'description' => 'Services de préparation et fourniture de repas pour les événements'],
+        ['nom_type' => 'Décoration', 'description' => 'Équipements et services de décoration pour les cérémonies'],
+        ['nom_type' => 'Fourchettes', 'description' => 'Ustensiles de cuisine disponibles à la location pour les événements'],
+        ['nom_type' => 'Plats', 'description' => 'Ustensiles de cuisine disponibles à la location pour les événements']
+    ];
+
+    // Requête d'insertion pour un type de produit
+    $query = "INSERT INTO type_produit (nom_type, t_description, created_at, updated_at) 
+          VALUES (:nom_type, :t_description, NOW(), NOW())";
+
+    // Préparer la requête
+    $stmt = $pdo->prepare($query);
+
+    // Parcourir le tableau des types de produits
+    foreach ($types_produits as $type) {
+        // Lier les valeurs
+        $stmt->bindParam(':nom_type', $type['nom_type']);
+        $stmt->bindParam(':t_description', $type['description']);
+
+        // Exécuter la requête
+        $stmt->execute();
+    }
+
+    // Confirmation
+    echo "Types de produits par défaut ajoutés avec succès !";
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
 
 $pdo = null;
+
+
+/*
+Ajout d'une table de paramètre pour :
+
+appliquer de réduction à un particuler qui achete plus de 10 Casiers et moins de 10 Casier
+appliquer de réduction à un Resto, Bar, Buvette, etc. qui achete plus de 10 Casiers et moins de 10 Casier
+appliquer aussi une réduction temporaire (pour les moments de fêtes par exemple)
+
+*/
