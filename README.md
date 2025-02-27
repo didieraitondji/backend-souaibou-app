@@ -370,7 +370,7 @@ En cas d'erreur ou de route invalide, l'API retourne une réponse JSON comme cec
 
 ### Description
 
-Cette API permet de mettre à jour les informations des utilisateurs, produits, commandes, livreurs, livraisons et catégories en fonction de l'URL fournie.
+Cette OPTION permet de mettre à jour les informations des utilisateurs, produits, commandes, livreurs, livraisons et catégories en fonction de l'URL fournie.
 
 ### Requête
 
@@ -492,6 +492,141 @@ Si un identifiant est manquant ou invalide, l'API renvoie une réponse JSON :
 ---
 
 ## Endpoints DELETE
+
+### Description
+
+Cette OPTION permet la suppression de différentes entités telles que les utilisateurs, produits, commandes, livreurs, livraisons et catégories.
+
+### Méthode HTTP
+
+Toutes les requêtes utilisent la méthode `DELETE`.
+
+### Routes Disponibles
+
+#### 1. Supprimer un utilisateur
+
+**URL** : `/user/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /user/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Utilisateur supprimé avec succès"
+    }
+```
+
+#### 2. Supprimer un produit
+
+**URL** : `/produit/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /produit/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Produit supprimé avec succès"
+    }
+```
+
+#### 3. Supprimer une commande
+
+**URL** : `/commande/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /commande/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Commande supprimée avec succès"
+    }
+```
+
+#### 4. Supprimer un livreur
+
+**URL** : `/livreur/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /livreur/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Livreur supprimé avec succès"
+    }
+```
+
+#### 5. Supprimer une livraison
+
+**URL** : `/livraison/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /livraison/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Livraison supprimée avec succès"
+    }
+```
+
+#### 6. Supprimer une catégorie
+
+**URL** : `/categorie/{id}`
+
+**Exemple de requête** :
+
+```http
+    DELETE /categorie/1
+```
+
+**Réponse possible** :
+
+```json
+    {
+        "status": "success",
+        "message": "Catégorie supprimée avec succès"
+    }
+```
+
+### Gestion des erreurs
+
+Si un identifiant est manquant ou invalide, la réponse sera :
+
+```json
+    {
+        "status": "error",
+        "message": "Identifiant invalide"
+    }
+```
 
 ---
 
