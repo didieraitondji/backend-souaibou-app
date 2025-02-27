@@ -147,6 +147,225 @@ En cas d'erreur ou de route invalide, l'API retourne une réponse JSON comme cec
 
 ---
 
+## Endpoints POST
+
+### 1. Utilisateur (`/user`)
+
+#### 1.1 Inscription
+
+**Endpoint:** `http://souaibou-api.net/user`
+
+**Description:** Crée un nouvel utilisateur.
+
+**Paramètres:**
+
+- `first_name` (string, requis) - Prénom de l'utilisateur
+- `last_name` (string, requis) - Nom de famille
+- `sexe` (string, requis) - Sexe
+- `telephone` (string, requis) - Numéro de téléphone
+- `rue` (string, requis) - Adresse
+- `password` (string, requis) - Mot de passe
+- `email` (string, requis) - Adresse email
+- `ville` (string, requis) - Ville
+- `pays` (string, requis) - Pays
+- `code_postal` (string, requis) - Code postal
+- `notification_option` (boolean, optionnel) - Option de notification
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Utilisateur créé avec succès"
+    }
+```
+
+#### 1.2 Connexion
+
+**Endpoint:** `http://souaibou-api.net/user/login`
+
+**Description:** Connecte un utilisateur.
+
+**Paramètres:**
+
+- `telephone` (string, requis) - Numéro de téléphone
+- `password` (string, requis) - Mot de passe
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "token": "JWT_TOKEN"
+    }
+```
+
+---
+
+### 2. Produit (`/produit`)
+
+#### 2.1 Ajout d'un produit
+
+**Endpoint:** `http://souaibou-api.net/produit`
+
+**Description:** Ajoute un nouveau produit à la base de données.
+
+**Paramètres:**
+
+- `id_users` (int, requis) - ID de l'utilisateur
+- `nom_produit` (string, requis) - Nom du produit
+- `p_description` (string, requis) - Description du produit
+- `id_categorie` (int, requis) - ID de la catégorie
+- `prix` (float, requis) - Prix du produit
+- `quantite_stock` (int, requis) - Quantité en stock
+- `est_en_promotion` (boolean, optionnel) - Indique si le produit est en promotion
+- `prix_promotionnel` (float, optionnel) - Prix promotionnel
+- `date_debut_promotion` (string, optionnel) - Date de début de la promotion
+- `date_fin_promotion` (string, optionnel) - Date de fin de la promotion
+- `p_image` (string, optionnel) - URL de l'image du produit
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Produit ajouté avec succès"
+    }
+```
+
+---
+
+### 3. Commande (`/commande`)
+
+#### 3.1 Création d'une commande
+
+**Endpoint:** `http://souaibou-api.net/commande`
+
+**Description:** Crée une nouvelle commande.
+
+**Paramètres:**
+
+- `id_users` (int, requis) - ID de l'utilisateur
+- `total_commande` (float, requis) - Montant total
+- `statut_commande` (string, requis) - Statut de la commande
+- `moyen_paiement` (string, requis) - Moyen de paiement
+- `est_a_livrer` (boolean, requis) - Indique si la commande doit être livrée
+- `livraison_creer` (boolean, optionnel) - Indique si une livraison a été créée
+- `rue_livraison` (string, optionnel) - Adresse de livraison
+- `ville_livraison` (string, optionnel) - Ville de livraison
+- `code_postal_livraison` (string, optionnel) - Code postal
+- `pays_livraison` (string, optionnel) - Pays de livraison
+- `commentaires` (string, optionnel) - Commentaires sur la commande
+- `produits` (array, requis) - Liste des produits commandés
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Commande créée avec succès"
+    }
+```
+
+---
+
+### 4. Livreur (`/livreur`)
+
+#### 4.1 Inscription d'un livreur
+
+**Endpoint:** `http://souaibou-api.net/livreur`
+
+**Description:** Ajoute un livreur au système.
+
+**Paramètres:**
+
+- `id_users` (int, requis) - ID de l'utilisateur
+- `first_name` (string, requis) - Prénom
+- `last_name` (string, requis) - Nom
+- `email` (string, requis) - Email
+- `telephone` (string, requis) - Numéro de téléphone
+- `sexe` (string, requis) - Sexe
+- `rue` (string, requis) - Adresse
+- `ville` (string, requis) - Ville
+- `code_postal` (string, requis) - Code postal
+- `pays` (string, requis) - Pays
+- `vehicule_type` (string, requis) - Type de véhicule
+- `vehicule_immatriculation` (string, requis) - Immatriculation du véhicule
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Livreur ajouté avec succès"
+    }
+```
+
+---
+
+### 5. Livraison (`/livraison`)
+
+#### 5.1 Création d'une livraison
+
+**Endpoint:** `http://souaibou-api.net/livraison`
+
+**Description:** Ajoute une nouvelle livraison.
+
+**Paramètres:**
+
+- `id_commande` (int, requis) - ID de la commande
+- `id_users` (int, requis) - ID de l'utilisateur
+- `id_livreur` (int, requis) - ID du livreur
+- `rue` (string, requis) - Adresse de livraison
+- `ville` (string, requis) - Ville
+- `code_postal` (string, requis) - Code postal
+- `pays` (string, requis) - Pays
+- `statut_livraison` (string, requis) - Statut de la livraison
+- `date_livraison_estimee` (string, optionnel) - Date estimée de livraison
+- `moyen_transport` (string, optionnel) - Moyen de transport
+- `commentaires` (string, optionnel) - Commentaires supplémentaires
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Livraison créée avec succès"
+    }
+```
+
+---
+
+### 6. Catégorie (`/categorie`)
+
+#### 6.1 Création d'une catégorie
+
+**Endpoint:** `http://souaibou-api.net/categorie`
+
+**Description:** Ajoute une nouvelle catégorie de produits.
+
+**Paramètres:**
+
+- `id_users` (int, requis) - ID de l'utilisateur
+- `nom_categorie` (string, requis) - Nom de la catégorie
+- `c_description` (string, optionnel) - Description de la catégorie
+- `c_image` (string, optionnel) - URL de l'image de la catégorie
+
+**Réponse:**
+
+```json
+    {
+        "status": "success",
+        "message": "Catégorie ajoutée avec succès"
+    }
+```
+
+---
+
+📌 **Note:** Toutes les requêtes doivent être envoyées en JSON avec le bon format pour éviter les erreurs.
+
+---
+
 ---
 
 📌 **Auteur** : AITONDJI Tolome Didier
