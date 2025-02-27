@@ -40,7 +40,7 @@ Chemin de dévellopement Local
 #### Récupérer les utilisateurs non activés
 
 ```json
-    GET /users/is_not_activated
+    http://souaibou-api.net/users/is_not_activated
 ```
 
 #### Récupérer un utilisateur spécifique
@@ -133,7 +133,7 @@ Chemin de dévellopement Local
 
 ---
 
-## Gestion des erreurs
+### Gestion des erreurs
 
 En cas d'erreur ou de route invalide, l'API retourne une réponse JSON comme ceci :
 
@@ -366,7 +366,137 @@ En cas d'erreur ou de route invalide, l'API retourne une réponse JSON comme cec
 
 ---
 
+## Endpoints PUT
+
+### Description
+
+Cette API permet de mettre à jour les informations des utilisateurs, produits, commandes, livreurs, livraisons et catégories en fonction de l'URL fournie.
+
+### Requête
+
+L'API attend une requête HTTP contenant des données JSON envoyées via `php://input`. Les données sont ensuite décodées et utilisées pour mettre à jour les entrées correspondantes dans la base de données.
+
+### Gestion des routes
+
+L'API repose sur une gestion basique des routes basée sur la première partie de l'URL (`$url[0]`).
+
+### Routes disponibles
+
+#### `PUT /user/{id}`
+
+- **Description** : Met à jour les informations d'un utilisateur.
+- **Champs requis** :
+  - `first_name`
+  - `last_name`
+  - `sexe`
+  - `telephone`
+  - `email`
+  - `rue`
+  - `ville`
+  - `code_postal`
+  - `pays`
+  - `notification_option`
+  - `picture`
+  - `user_type`
+  - `is_activated`
+
+#### `PUT /produit/{id}`
+
+- **Description** : Met à jour les informations d'un produit.
+- **Champs requis** :
+  - `nom_produit`
+  - `p_description`
+  - `id_categorie`
+  - `prix`
+  - `quantite_stock`
+  - `statut_produit`
+  - `est_en_promotion`
+  - `prix_promotionnel`
+  - `date_debut_promotion`
+  - `date_fin_promotion`
+  - `p_image`
+
+#### `PUT /commande/{id}`
+
+- **Description** : Met à jour une commande.
+- **Champs requis** :
+  - `total_commande`
+  - `statut_commande`
+  - `moyen_paiement`
+  - `est_a_livrer`
+  - `livraison_creer`
+  - `rue_livraison`
+  - `ville_livraison`
+  - `code_postal_livraison`
+  - `pays_livraison`
+  - `commentaires`
+  - `produits`
+
+#### `PUT /livreur/{id}`
+
+- **Description** : Met à jour un livreur.
+- **Champs requis** :
+  - `first_name`
+  - `last_name`
+  - `email`
+  - `telephone`
+  - `sexe`
+  - `rue`
+  - `ville`
+  - `code_postal`
+  - `pays`
+  - `statut_livreur`
+  - `notification_option`
+  - `is_activated`
+  - `is_connected`
+  - `vehicule_type`
+  - `vehicule_immatriculation`
+
+#### `PUT /livraison/{id}`
+
+- **Description** : Met à jour une livraison.
+- **Champs requis** :
+  - `id_commande`
+  - `id_users`
+  - `id_livreur`
+  - `rue`
+  - `ville`
+  - `code_postal`
+  - `pays`
+  - `statut_livraison`
+  - `date_livraison_estimee`
+  - `date_livraison_effective`
+  - `moyen_transport`
+  - `commentaires`
+
+#### `PUT /categorie/{id}`
+
+- **Description** : Met à jour une catégorie.
+- **Champs requis** :
+  - `nom_categorie`
+  - `c_description`
+  - `c_image`
+  - `statut_categorie`
+
+### Gestion des erreurs de mise à jour
+
+Si un identifiant est manquant ou invalide, l'API renvoie une réponse JSON :
+
+```json
+    {
+        "status": "error",
+        "message": "Identifiant invalide"
+    }
+```
+
 ---
 
+## Endpoints DELETE
+
+---
+
+## Notes sur le concepteur/Développeur
+
 📌 **Auteur** : AITONDJI Tolome Didier
+
 📅 **Dernière mise à jour** : 27 Février 2025
