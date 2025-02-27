@@ -8,14 +8,14 @@ Chemin de dévellopement Local
     http://souaibou-api.net/
 ```
 
-## Endpoints
+## Endpoints GET
 
 ### 1. Utilisateurs
 
 #### Récupérer tous les utilisateurs
 
 ```json
-    GET /users
+    http://souaibou-api.net/users
 ```
 
 **Réponse :**
@@ -34,7 +34,7 @@ Chemin de dévellopement Local
 #### Récupérer les utilisateurs activés
 
 ```json
-    GET /users/is_activated
+    http://souaibou-api.net/users/is_activated
 ```
 
 #### Récupérer les utilisateurs non activés
@@ -46,7 +46,7 @@ Chemin de dévellopement Local
 #### Récupérer un utilisateur spécifique
 
 ```json
-    GET /user/{id}
+    http://souaibou-api.net/user/{id}
 ```
 
 ### 2. Produits
@@ -54,13 +54,13 @@ Chemin de dévellopement Local
 #### Récupérer tous les produits
 
 ```json
-    GET /produits
+    http://souaibou-api.net/produits
 ```
 
 #### Récupérer un produit spécifique
 
 ```json
-    GET /produit/{id}
+    http://souaibou-api.net/produit/{id}
 ```
 
 ### 3. Commandes
@@ -68,13 +68,13 @@ Chemin de dévellopement Local
 #### Récupérer toutes les commandes
 
 ```json
-    GET /commandes
+    http://souaibou-api.net/commandes
 ```
 
 #### Récupérer une commande spécifique
 
 ```json
-    GET /commande/{id}
+    http://souaibou-api.net/commande/{id}
 ```
 
 ### 4. Livreurs
@@ -82,25 +82,25 @@ Chemin de dévellopement Local
 #### Récupérer tous les livreurs
 
 ```json
-    GET /livreurs
+    http://souaibou-api.net/livreurs
 ```
 
 #### Récupérer les livreurs activés
 
 ```json
-    GET /livreurs/is_activated
+    http://souaibou-api.net/livreurs/is_activated
 ```
 
 #### Récupérer les livreurs non activés
 
 ```json
-    GET /livreurs/is_not_activated
+    http://souaibou-api.net/livreurs/is_not_activated
 ```
 
 #### Récupérer un livreur spécifique
 
 ```json
-    GET /livreur/{id}
+    http://souaibou-api.net/livreur/{id}
 ```
 
 ### 5. Catégories
@@ -108,13 +108,13 @@ Chemin de dévellopement Local
 #### Récupérer toutes les catégories
 
 ```json
-    GET /categories
+    http://souaibou-api.net/categories
 ```
 
 #### Récupérer une catégorie spécifique
 
 ```json
-    GET /categorie/{id}
+    http://souaibou-api.net/categorie/{id}
 ```
 
 ### 6. Livraisons
@@ -122,13 +122,13 @@ Chemin de dévellopement Local
 #### Récupérer toutes les livraisons
 
 ```json
-    GET /livraisons
+    http://souaibou-api.net/livraisons
 ```
 
 #### Récupérer une livraison spécifique
 
 ```json
-    GET /livraison/{id}
+    http://souaibou-api.net/livraison/{id}
 ```
 
 ---
