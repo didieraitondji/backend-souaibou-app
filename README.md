@@ -493,7 +493,7 @@ Si un identifiant est manquant ou invalide, l'API renvoie une réponse JSON :
 
 ## Endpoints DELETE
 
-### Description
+### Description de la route
 
 Cette OPTION permet la suppression de différentes entités telles que les utilisateurs, produits, commandes, livreurs, livraisons et catégories.
 
@@ -617,7 +617,7 @@ Toutes les requêtes utilisent la méthode `DELETE`.
     }
 ```
 
-### Gestion des erreurs
+### Gestion des erreurs pour cette route
 
 Si un identifiant est manquant ou invalide, la réponse sera :
 
