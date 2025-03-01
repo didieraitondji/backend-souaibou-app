@@ -148,6 +148,7 @@ switch ($url[0]) {
             $categorie->setNomCategorie($data["nom_categorie"]);
             $categorie->setCDescription($data["c_description"]);
             $categorie->setCImage($data["c_image"]);
+            $categorie->setIdTypeProduit($data["id_type_produit"]);
             $categorie->setStatutCategorie($data['statut_categorie']);
 
             echo $categorie->update();

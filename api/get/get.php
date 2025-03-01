@@ -106,6 +106,14 @@ switch ($url[0]) {
             echo $categorie->readAll();
         }
         break;
+    case 'type_produits':
+        if (!empty($url[1])) {
+            echo $jsonErrorData;
+        } else {
+            $typeProduit = new TypeProduit($database->getConnection());
+            echo $typeProduit->readAll();
+        }
+        break;
     case 'categorie':
         if (empty($url[1])) {
             echo $jsonErrorData;
@@ -113,6 +121,15 @@ switch ($url[0]) {
             $categorie = new Categories($database->getConnection());
             $categorie->setIdCategorie($url[1]);
             echo $categorie->readOne();
+        }
+        break;
+    case 'type_produit':
+        if (empty($url[1])) {
+            echo $jsonErrorData;
+        } else {
+            $typeProduit = new TypeProduit($database->getConnection());
+            $typeProduit->setIdType($url[1]);
+            echo $typeProduit->readOne();
         }
         break;
     case 'livraisons':

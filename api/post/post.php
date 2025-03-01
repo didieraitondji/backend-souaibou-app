@@ -188,11 +188,25 @@ switch ($url[0]) {
             $categorie = new Categories($database->getConnection());
 
             $categorie->setIdUsers($data["id_users"]);
+            $categorie->setIdTypeProduit($data["id_type_produit"]);
             $categorie->setNomCategorie($data["nom_categorie"]);
             $categorie->setCDescription($data["c_description"]);
             $categorie->setCImage($data["c_image"]);
+            $categorie->setStatutCategorie($data['statut_categorie']);
 
             echo $categorie->create();
+        }
+        break;
+    case 'type_produit':
+        if (!empty($url[1])) {
+            echo $jsonErrorData;
+        } else {
+            $typeProduit = new TypeProduit($database->getConnection());
+
+            $typeProduit->setTDescription($data['t_description']);
+            $typeProduit->setNomType($data['nom_type']);
+
+            echo $typeProduit->create();
         }
         break;
 

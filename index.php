@@ -9,6 +9,7 @@ include_once("./api/Produits.php");
 include_once("./api/Livraisons.php");
 include_once("./api/Livreurs.php");
 include_once("./api/LivreursAuth.php");
+include_once("./api/TypeProduit.php");
 
 
 header("Content-Type: application/json");

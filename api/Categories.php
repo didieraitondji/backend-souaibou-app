@@ -6,6 +6,7 @@ class Categories
     private $conn;
     private $id_categorie;
     private $id_users;
+    private $id_type_produit;
     private $nom_categorie;
     private $c_description;
     private $c_image;
@@ -38,6 +39,17 @@ class Categories
     public function setIdUsers($id_users)
     {
         $this->id_users = $id_users;
+    }
+
+    // Getter et Setter pour id_type_produit
+    public function getIdTypeProduit()
+    {
+        return $this->id_type_produit;
+    }
+
+    public function setIdTypeProduit($id_type_produit)
+    {
+        $this->id_type_produit = $id_type_produit;
     }
 
     // Getter et Setter pour nom_categorie
@@ -118,14 +130,16 @@ class Categories
         }
 
         // Insérer une nouvelle catégorie si le nom n'existe pas
-        $query = "INSERT INTO categories (id_users, nom_categorie, c_description, c_image)
-              VALUES (:id_users, :nom_categorie, :c_description, :c_image)";
+        $query = "INSERT INTO categories (id_users, id_type_produit, nom_categorie, c_description, statut_categorie, c_image)
+              VALUES (:id_users, :id_type_produit, :nom_categorie, :c_description, :statut_categorie, :c_image)";
         $stmt = $this->conn->prepare($query);
 
         // Liaison des paramètres
         $stmt->bindParam(':id_users', $this->id_users);
+        $stmt->bindParam(':id_type_produit', $this->id_type_produit);
         $stmt->bindParam(':nom_categorie', $this->nom_categorie);
         $stmt->bindParam(':c_description', $this->c_description);
+        $stmt->bindParam(':statut_categorie', $this->statut_categorie);
         $stmt->bindParam(':c_image', $this->c_image);
 
         if ($stmt->execute()) {
@@ -155,6 +169,7 @@ class Categories
 
             // Remplir les propriétés via setters
             $this->setIdUsers($row['id_users']);
+            $this->setIdTypeProduit($row['id_type_produit']);
             $this->setNomCategorie($row['nom_categorie']);
             $this->setCDescription($row['c_description']);
             $this->setCImage($row['c_image']);
@@ -190,6 +205,7 @@ class Categories
                   SET nom_categorie = :nom_categorie,
                       c_description = :c_description,
                       c_image = :c_image,
+                      id_type_produit = :c_id_type_produit,
                       statut_categorie = :statut_categorie
                   WHERE id_categorie = :id_categorie";
         $stmt = $this->conn->prepare($query);
@@ -198,6 +214,7 @@ class Categories
         $stmt->bindParam(':nom_categorie', $this->nom_categorie);
         $stmt->bindParam(':c_description', $this->c_description);
         $stmt->bindParam(':c_image', $this->c_image);
+        $stmt->bindParam(':c_id_type_produit', $this->id_type_produit);
         $stmt->bindParam(':statut_categorie', $this->statut_categorie);
         $stmt->bindParam(':id_categorie', $this->id_categorie);
 
